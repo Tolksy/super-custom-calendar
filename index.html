@@ -55,6 +55,7 @@
       margin: 2px;
       border-radius: 6px;
       cursor: pointer;
+      transition: background 0.2s;
     }
 
     .days div.today {
@@ -65,6 +66,7 @@
 
     .days div.other-month {
       color: #ccc;
+      pointer-events: none;
     }
 
     .days div:hover {
@@ -100,7 +102,6 @@
       const lastDayOfMonth = new Date(year, month + 1, 0);
       const startDay = firstDayOfMonth.getDay();
       const daysInMonth = lastDayOfMonth.getDate();
-
       const prevMonthLastDay = new Date(year, month, 0).getDate();
 
       monthYear.textContent = currentDate.toLocaleDateString("default", {
@@ -120,6 +121,8 @@
       for (let i = 1; i <= daysInMonth; i++) {
         const div = document.createElement("div");
         const today = new Date();
+        const thisDay = new Date(year, month, i);
+
         if (
           i === today.getDate() &&
           month === today.getMonth() &&
@@ -127,11 +130,22 @@
         ) {
           div.classList.add("today");
         }
+
         div.textContent = i;
+
+        // When clicked, go to daily planner with date
+        div.addEventListener("click", () => {
+          const yyyy = thisDay.getFullYear();
+          const mm = String(thisDay.getMonth() + 1).padStart(2, '0');
+          const dd = String(thisDay.getDate()).padStart(2, '0');
+          const formattedDate = `${yyyy}-${mm}-${dd}`;
+          window.location.href = `daily-planner.html?date=${formattedDate}`;
+        });
+
         calendarDays.appendChild(div);
       }
 
-      // Next month's days to fill the grid
+      // Fill in next month's starting days
       const totalCells = startDay + daysInMonth;
       const nextDays = 7 - (totalCells % 7);
       if (nextDays < 7) {
